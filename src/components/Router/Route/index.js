@@ -22,8 +22,11 @@ const Route = ({
     <ReactRouterRoute component={component} exact={exact} path={path} />
   );
 
+  if (requestingAuthUser) {
+    return <Progress />;
+  }
+
   if (validation) {
-    if (requestingAuthUser) return <Progress />;
     return validation({ authUser }) ? route : componentIfValidationFails;
   }
 

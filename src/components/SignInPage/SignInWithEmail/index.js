@@ -36,7 +36,7 @@ const SignInWithEmailForm = () => {
   const query = useQuery();
   const { auth, db } = useFirebase();
   const emailFromLocalStorage = window.localStorage.getItem('emailForSignIn');
-  const [emailConfirmationModalOpen, setEmailConfirmationModalOpen] =
+  const [emailConfirmationModalIsOpen, setEmailConfirmationModalIsOpen] =
     useState(false);
 
   const isSignInWithEmailLink = isSignInWithEmailLinkFirebase(
@@ -86,14 +86,13 @@ const SignInWithEmailForm = () => {
 
       const trimmedEmail = values.email.trim();
 
-      const response = await signInWithEmailLinkFirebase(
+      const { user } = await signInWithEmailLinkFirebase(
         auth,
         trimmedEmail,
         window.location.href
       );
 
-      const { user } = response;
-      const { isNewUser } = getAdditionalUserInfo(response);
+      const { isNewUser } = getAdditionalUserInfo(user);
 
       if (isNewUser) {
         await setDoc(doc(db, 'users', user.uid), {
@@ -140,7 +139,7 @@ const SignInWithEmailForm = () => {
       if (emailFromLocalStorage) {
         signInWithEmailLink({ email: emailFromLocalStorage });
       } else {
-        setEmailConfirmationModalOpen(true);
+        setEmailConfirmationModalIsOpen(true);
       }
     }
   }, []);
@@ -185,9 +184,9 @@ const SignInWithEmailForm = () => {
         )}
       </Formik>
       <EmailConfirmationModal
-        onClose={() => setEmailConfirmationModalOpen(false)}
+        onClose={() => setEmailConfirmationModalIsOpen(false)}
         onSubmit={signInWithEmailLink}
-        open={emailConfirmationModalOpen}
+        open={emailConfirmationModalIsOpen}
         requesting={requestingInModal}
       />
     </>

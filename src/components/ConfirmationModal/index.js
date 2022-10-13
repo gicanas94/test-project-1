@@ -14,25 +14,11 @@ const StyledActionsBox = styled(Box)(() => ({
   textAlign: 'right',
 }));
 
-const ConfirmationModal = ({
-  acceptButtonText,
-  cancelButtonText,
-  content,
-  title,
-}) => {
-  const {
-    confirmConfirmationModal,
-    confirmationModalIsOpened,
-    declineConfirmationModal,
-  } = useConfirmationModal();
+const ConfirmationModal = ({ acceptButtonText, cancelButtonText }) => {
+  const { confirm, content, decline, isOpen, title } = useConfirmationModal();
 
   return (
-    <Modal
-      maxWidth="sm"
-      onClose={declineConfirmationModal}
-      open={confirmationModalIsOpened}
-      showCloseIcon={false}
-    >
+    <Modal maxWidth="sm" onClose={decline} open={isOpen} showCloseIcon={false}>
       <Typography
         component="h2"
         sx={{ fontWeight: 'bold', marginBottom: 3 }}
@@ -44,7 +30,7 @@ const ConfirmationModal = ({
       <StyledActionsBox>
         <Button
           disableElevation
-          onClick={declineConfirmationModal}
+          onClick={decline}
           size="large"
           sx={{ marginRight: 3 }}
           type="button"
@@ -54,7 +40,7 @@ const ConfirmationModal = ({
         </Button>
         <Button
           disableElevation
-          onClick={confirmConfirmationModal}
+          onClick={confirm}
           size="large"
           type="button"
           variant="contained"
@@ -69,15 +55,11 @@ const ConfirmationModal = ({
 ConfirmationModal.propTypes = {
   acceptButtonText: PropTypes.string,
   cancelButtonText: PropTypes.string,
-  content: PropTypes.string,
-  title: PropTypes.string,
 };
 
 ConfirmationModal.defaultProps = {
   acceptButtonText: 'Accept',
   cancelButtonText: 'Cancel',
-  content: '',
-  title: '',
 };
 
 export default ConfirmationModal;

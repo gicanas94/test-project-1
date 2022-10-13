@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 // @own
 import confirmationModal from './confirmationModal';
 import notification from './notification';
+import request from './request';
 
 const createStore = () => {
   const thunkArguments = {};
@@ -20,6 +21,7 @@ const createStore = () => {
     reducer: {
       confirmationModal,
       notification,
+      request,
     },
   });
 

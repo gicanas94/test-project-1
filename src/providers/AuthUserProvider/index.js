@@ -1,7 +1,7 @@
 // @packages
 import PropTypes from 'prop-types';
 import React, { createContext, useState, useEffect } from 'react';
-import { collection, doc, onSnapshot, query } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 
@@ -26,43 +26,40 @@ const AuthUserProvider = ({ children }) => {
     );
   };
 
+  const handleAuthStateChange = async (user) => {
+    setRequestingAuthUser(true);
+
+    if (user) {
+      const userSnap = await getDoc(doc(db, 'users', user.uid));
+      setAuthUser(userSnap.data());
+      setRequestingAuthUser(false);
+
+      // onSnapshot(
+      //   doc(db, 'users', user.uid),
+      //   (document) => {
+      //     setAuthUser(document.data());
+      //     setRequestingAuthUser(false);
+      //   },
+      //   handleError
+      // );
+
+      // onSnapshot(
+      //   query(collection(db, `users/${user.uid}/addresses`)),
+      //   (querySnapshot) => {
+      //     const addresses = [];
+      //     querySnapshot.forEach((document) => addresses.push(document.data()));
+      //     setAuthUserAddresses(addresses);
+      //   },
+      //   handleError
+      // );
+    } else {
+      setAuthUser(null);
+      setRequestingAuthUser(false);
+    }
+  };
+
   useEffect(() => {
-    onAuthStateChanged(
-      auth,
-      async (user) => {
-        setRequestingAuthUser(true);
-
-        if (user) {
-          await onSnapshot(
-            doc(db, 'users', user.uid),
-            (document) => {
-              setAuthUser(document.data());
-            },
-            handleError
-          );
-
-          await onSnapshot(
-            query(collection(db, `users/${user.uid}/addresses`)),
-            (querySnapshot) => {
-              const addresses = [];
-
-              querySnapshot.forEach((document) =>
-                addresses.push(document.data())
-              );
-
-              setAuthUserAddresses(addresses);
-            },
-            handleError
-          );
-
-          setRequestingAuthUser(false);
-        } else {
-          setAuthUser(null);
-          setRequestingAuthUser(false);
-        }
-      },
-      handleError
-    );
+    onAuthStateChanged(auth, handleAuthStateChange, handleError);
   }, []);
 
   return (

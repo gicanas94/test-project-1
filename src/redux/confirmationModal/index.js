@@ -2,27 +2,37 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  isConfirmed: false,
-  isDeclined: false,
-  isOpened: false,
+  content: '',
+  status: {
+    confirmed: false,
+    declined: false,
+    open: false,
+  },
+  title: '',
 };
 
 const slice = createSlice({
   initialState,
   name: 'confirmationModal',
   reducers: {
-    openConfirmationModal: (state) => {
-      state.isConfirmed = false;
-      state.isDeclined = false;
-      state.isOpened = true;
+    openConfirmationModal: (state, action) => {
+      state.content = action.payload.content;
+      state.status.confirmed = false;
+      state.status.declined = false;
+      state.status.open = true;
+      state.title = action.payload.title;
     },
     confirmConfirmationModal: (state) => {
-      state.isConfirmed = true;
-      state.isOpened = false;
+      state.content = '';
+      state.status.confirmed = true;
+      state.status.open = false;
+      state.title = '';
     },
     declineConfirmationModal: (state) => {
-      state.isDeclined = true;
-      state.isOpened = false;
+      state.content = '';
+      state.status.declined = true;
+      state.status.open = false;
+      state.title = '';
     },
   },
 });

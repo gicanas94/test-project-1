@@ -1,9 +1,11 @@
 // @packages
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {};
+
 const slice = createSlice({
   name: 'notification',
-  initialState: {},
+  initialState,
   reducers: {
     openNotification: (state, action) => {
       state.duration = action.payload.duration;

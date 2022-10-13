@@ -3,34 +3,39 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // @app
 import {
-  confirmConfirmationModal as confirmConfirmationModalAction,
-  declineConfirmationModal as declineConfirmationModalAction,
+  confirmConfirmationModal,
+  declineConfirmationModal,
 } from 'redux/confirmationModal';
 import { openConfirmationModalThunk } from 'redux/confirmationModal/thunks';
-import { selectConfirmationModalIsOpened } from 'redux/confirmationModal/selectors';
+import {
+  selectConfirmationModalContent,
+  selectConfirmationModalIsOpen,
+  selectConfirmationModalTitle,
+} from 'redux/confirmationModal/selectors';
 
 export default () => {
   const dispatch = useDispatch();
+  const isOpen = useSelector(selectConfirmationModalIsOpen);
+  const title = useSelector(selectConfirmationModalTitle);
+  const content = useSelector(selectConfirmationModalContent);
 
-  const confirmationModalIsOpened = useSelector(
-    selectConfirmationModalIsOpened
-  );
+  const openConfirmationModal = async (payload) => {
+    const { payload: result } = await dispatch(
+      openConfirmationModalThunk(payload)
+    );
 
-  const openConfirmationModal = async () => {
-    const { payload } = await dispatch(openConfirmationModalThunk());
-    return payload;
+    return result;
   };
 
-  const confirmConfirmationModal = () =>
-    dispatch(confirmConfirmationModalAction());
-
-  const declineConfirmationModal = () =>
-    dispatch(declineConfirmationModalAction());
+  const confirm = () => dispatch(confirmConfirmationModal());
+  const decline = () => dispatch(declineConfirmationModal());
 
   return {
-    confirmConfirmationModal,
-    confirmationModalIsOpened,
-    declineConfirmationModal,
+    confirm,
+    content,
+    decline,
+    isOpen,
     openConfirmationModal,
+    title,
   };
 };

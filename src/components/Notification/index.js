@@ -1,17 +1,26 @@
 // @packages
 import Alert from '@mui/material/Alert';
-import PropTypes from 'prop-types';
 import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // @app
 import { closeNotification } from 'redux/notification';
+import {
+  selectNotificationDuration,
+  selectNotificationIsOpen,
+  selectNotificationMessage,
+  selectNotificationType,
+} from 'redux/notification/selectors';
 
-const Notification = ({ duration, message, open, type }) => {
+const Notification = () => {
   const dispatch = useDispatch();
+  const duration = useSelector(selectNotificationDuration);
+  const isOpen = useSelector(selectNotificationIsOpen);
+  const message = useSelector(selectNotificationMessage);
+  const type = useSelector(selectNotificationType);
 
-  const handleNotificationClose = (event, reason) => {
+  const handleNotificationClose = (_, reason) => {
     if (reason === 'clickaway') return;
     dispatch(closeNotification());
   };
@@ -24,27 +33,13 @@ const Notification = ({ duration, message, open, type }) => {
       }}
       autoHideDuration={duration}
       onClose={handleNotificationClose}
-      open={open}
+      open={isOpen}
     >
       <Alert onClose={handleNotificationClose} severity={type} variant="filled">
         {message}
       </Alert>
     </Snackbar>
   );
-};
-
-Notification.propTypes = {
-  duration: PropTypes.number,
-  message: PropTypes.string,
-  open: PropTypes.bool,
-  type: PropTypes.oneOf(['error', 'info', 'success', 'warning']),
-};
-
-Notification.defaultProps = {
-  duration: 5000,
-  message: '',
-  open: false,
-  type: 'success',
 };
 
 export default Notification;

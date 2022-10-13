@@ -1,3 +1,4 @@
 Backlog
 
 - Reorganizar components/Addresses/AddOrEditAddressPage
+- Flujo del login, redux de requests

@@ -3,28 +3,31 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 // @own
 import { openConfirmationModal } from 'redux/confirmationModal';
+import {
+  selectConfirmationModalIsConfirmed,
+  selectConfirmationModalIsDeclined,
+} from 'redux/confirmationModal/selectors';
 
-// eslint-disable-next-line import/prefer-default-export
 export const openConfirmationModalThunk = createAsyncThunk(
   'confirmationModal/openConfirmationModal',
-  async (_, thunkApi) => {
+  async (payload, thunkApi) => {
     const {
       dispatch,
       extra: { store },
     } = thunkApi;
 
-    dispatch(openConfirmationModal());
+    dispatch(openConfirmationModal(payload));
 
     return new Promise((resolve) => {
       const unsubscribe = store.subscribe(() => {
         const state = store.getState();
 
-        if (state.confirmationModal.isConfirmed) {
+        if (selectConfirmationModalIsConfirmed(state)) {
           unsubscribe();
           resolve(true);
         }
 
-        if (state.confirmationModal.isDeclined) {
+        if (selectConfirmationModalIsDeclined(state)) {
           unsubscribe();
           resolve(false);
         }

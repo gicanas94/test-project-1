@@ -33,45 +33,38 @@ const Addresses = () => {
     history.push(ROUTES.ACCOUNT.ADDRESSES.EDIT_FN(addressId));
 
   const handleAddressDelete = async (addressId) => {
-    const isConfirmed = await openConfirmationModal();
+    const isConfirmed = await openConfirmationModal({
+      content: 'Are you sure you want to delete this address?',
+      title: 'Delete address',
+    });
 
-    console.log('isConfirmed', isConfirmed);
+    if (isConfirmed) {
+      try {
+        setRequestingAddressId(addressId);
 
-    // openConfirmationModal({
-    //   content: 'Are you sure you want to delete this address?',
-    //   onAccept: async () => {
-    //     try {
-    //       closeConfirmationModal();
-    //       setRequestingAddressId(addressId);
+        await deleteDoc(
+          doc(db, `users/${authUser.uid}/addresses/${addressId}`)
+        );
 
-    //       await deleteDoc(
-    //         doc(db, `users/${authUser.uid}/addresses/${addressId}`)
-    //       );
-
-    //       dispatch(
-    //         openNotification({
-    //           duration: 5000,
-    //           message: 'The address was deleted',
-    //           type: 'success',
-    //         })
-    //       );
-    //     } catch (error) {
-    //       dispatch(
-    //         openNotification({
-    //           duration: 5000,
-    //           message: `An error occurred (${error.code})`,
-    //           type: 'error',
-    //         })
-    //       );
-    //     } finally {
-    //       setRequestingAddressId(false);
-    //     }
-    //   },
-    //   onCancel: closeConfirmationModal,
-    //   onClose: closeConfirmationModal,
-    //   open: true,
-    //   title: 'Delete address',
-    // });
+        dispatch(
+          openNotification({
+            duration: 5000,
+            message: 'The address was deleted',
+            type: 'success',
+          })
+        );
+      } catch (error) {
+        dispatch(
+          openNotification({
+            duration: 5000,
+            message: `An error occurred (${error.code})`,
+            type: 'error',
+          })
+        );
+      } finally {
+        setRequestingAddressId(false);
+      }
+    }
   };
 
   return (
